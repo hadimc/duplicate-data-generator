@@ -9,8 +9,8 @@ from faker import Faker
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', help='Path to json config file', dest='config_file_path', required=True)
-    parser.add_argument('--output', help='output xslx file', dest='output_file_path', required=True)
-    args = parser.parse_args() 
+    parser.add_argument('--output', help='output file', dest='output_file_path', required=True)
+    args = parser.parse_args()
 
     with open(args.config_file_path) as config_file:
         config = json.load(config_file)
@@ -33,10 +33,16 @@ def main():
                 known_duplicates[column['name']] = known_duplicates[column['name']].apply(transposition_chars)
         if 'mistype_chars' in column and column['mistype_chars'] > 0:
             for i in range(column['mistype_chars']):
-                known_duplicates[column['name']] = known_duplicates[column['name']].apply(transposition_chars)
+                known_duplicates[column['name']] = known_duplicates[column['name']].apply(mistype_chars)
+        if 'delete_words' in column and column['delete_words'] > 0:
+            for i in range(column['delete_words']):
+                known_duplicates[column['name']] = known_duplicates[column['name']].apply(delete_words)
+        if 'initial_chars' in column and column['initial_chars'] > 0:
+            known_duplicates[column['name']] = known_duplicates[column['name']].apply(initial_chars,chars=column['initial_chars'])
 
     output_data = initial_fake_data.append(known_duplicates)
-    output_data.to_excel(args.output_file_path)    
+    output_data.to_csv(args.output_file_path+".csv")
+    output_data.to_excel(args.output_file_path+".xlsx") 
 
 
 def get_fake_string(fake_type, fake_gen):
@@ -80,6 +86,20 @@ def mistype_chars(str_to_alter):
     split_str = split(str_to_alter)
     split_str[char_to_alter] = random.choice(string.ascii_letters)
     str_to_alter = combine(split_str)
+    return str_to_alter
+
+def delete_words(str_to_alter):
+    split_str = str_to_alter.split(' ')
+    word_to_delete = random.randrange(len(split_str))
+    del split_str[word_to_delete]
+    str_to_alter = ' '.join(split_str)
+    return str_to_alter
+
+def initial_chars(str_to_alter, chars):
+    length = random.randrange(max(chars,len(str_to_alter)-1))
+    str_to_alter = str_to_alter[0:length]
+    if length == 1:
+        str_to_alter += '.'
     return str_to_alter
 
 def split(word):
