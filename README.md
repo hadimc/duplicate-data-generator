@@ -26,6 +26,10 @@ Supported types are: "first_name","last_name", "street_address", "secondary_addr
 #### transposition_chars
 The number of characeters to transposition (e.g. switch) within the cell of a column
 #### mistype_chars
-The number of characeters to mistype within the the cell of a column
+The number of characeters to mistype within the cell of a column
+#### deleted_words
+How many (space-seprated) words are deleted from the cell of a column 
+#### initial_chars
+The maximum number of initial characters that are kept from the cell of a column (the number is chosen at random)
 
 
