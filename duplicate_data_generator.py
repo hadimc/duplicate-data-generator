@@ -40,7 +40,7 @@ def main():
         if 'initial_chars' in column and column['initial_chars'] > 0:
             known_duplicates[column['name']] = known_duplicates[column['name']].apply(initial_chars,chars=column['initial_chars'])
 
-    output_data = initial_fake_data.append(known_duplicates)
+    output_data = initial_fake_data.append(known_duplicates, ignore_index=True)
     output_data.to_csv(args.output_file_path+".csv")
     output_data.to_excel(args.output_file_path+".xlsx") 
 
